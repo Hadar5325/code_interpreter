@@ -56,4 +56,7 @@ another thread runs in the background updating the symbol table with current val
 
 NOTE: sleep command is implemented by sleeping the amount inputed in MILLISECONDS!
 
+GitHub link:
+https://github.com/sshiraa/code_interpreter
+
 Enjoy your flight with us :)
