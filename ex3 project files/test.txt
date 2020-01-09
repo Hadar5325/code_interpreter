@@ -1,0 +1,6 @@
+openDataServer(5400)
+var rpm <- sim("/engines/engine/rpm")
+while 1 <= 88888 {
+	Print(rpm)
+	Sleep(2250)
+}

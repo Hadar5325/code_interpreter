@@ -1,0 +1,18 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/linor/CLionProjects/ex3/SinletonMutex.cpp
+SinletonMutex.h
+/home/linor/CLionProjects/ex3/SinletonMutex.h
+iostream
+-
+
+/home/linor/CLionProjects/ex3/SinletonMutex.h
+pthread.h
+/home/linor/CLionProjects/ex3/pthread.h
+
