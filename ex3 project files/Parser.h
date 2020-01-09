@@ -8,8 +8,6 @@
 #include <map>
 #include <string>
 #include "commands.h"
-//#include "ex1.h"
-
 using namespace std;
 
 class Parser {

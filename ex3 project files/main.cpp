@@ -12,8 +12,10 @@ int main(int argc, char *argv[]) {
     Parser *p = new Parser();
     //string file name
     string filename(argv[1]);
+    // lex the vector:
     Lexer* lexer = new Lexer();
     lexedVector = lexer->toLex(filename);
+    // parse it :
     p->parse(&lexedVector);
     return 0;
 }

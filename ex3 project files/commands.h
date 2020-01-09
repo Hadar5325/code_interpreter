@@ -34,12 +34,6 @@ class Command {
 public:
 virtual int execute(vector<string> *, int, map<string, Command *> *) {}
 bool isTrueCondition(vector<string> &conditionVector);
-protected:
-/*static map<string, VarInfo *> rightDirection;
-static map<string, double> leftDirection;
-static map<string, string> symbolTable;
-static queue<string> queueToConnectCommand;
-static Interpreter i1;*/
 };
 
 class OpenServerCommand : public Command {

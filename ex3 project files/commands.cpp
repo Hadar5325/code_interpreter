@@ -2,7 +2,6 @@
 // Created by linor on 09/01/2020.
 //
 
-//#include "commands.h"
 #include<string>
 #include <vector>
 #include "commands.h"
@@ -19,6 +18,7 @@ bool Command::isTrueCondition(vector<string> &conditionVector) {
     double exp1Value, exp2Value;
     string s1 = "", s2 = "", s3 = "";
     vector<string> delims1 = {"==", "!=", "<=", ">="};
+    // go over all elements and check equation of the elements :
     for (size_t i = 0; i < delims1.size(); i++) {
         if (s.find(delims1[i]) != s.npos) {
             found = s.find(delims1[i]);
@@ -29,6 +29,7 @@ bool Command::isTrueCondition(vector<string> &conditionVector) {
             flag = 1;
         }
     }
+    // bigget than + less then conditions
     if (flag == 0) {
         vector<string> delims2 = {"<", ">"};
         for (size_t i = 0; i < delims2.size(); i++) {
@@ -41,6 +42,7 @@ bool Command::isTrueCondition(vector<string> &conditionVector) {
             }
         }
     }
+    // in case that the expression not exists in the map:
     if (symbolTable.find(exp1) != symbolTable.end()) {
         string sim = symbolTable.at(exp1);
         //left contain the value of this sim
@@ -100,7 +102,9 @@ bool Command::isTrueCondition(vector<string> &conditionVector) {
         }
     }
 };
-void OpenServerCommand:: createChronoSimvector(vector<string> *chronologicalSinAdd) {
+
+// fill in the vector of sim
+void OpenServerCommand::createChronoSimvector(vector<string> *chronologicalSinAdd) {
     chronologicalSinAdd->push_back("/instrumentation/airspeed-indicator/indicated-speed-kt");
     chronologicalSinAdd->push_back("/sim/time/warp");
     chronologicalSinAdd->push_back("/controls/switches/magnetos");
@@ -138,8 +142,9 @@ void OpenServerCommand:: createChronoSimvector(vector<string> *chronologicalSinA
     chronologicalSinAdd->push_back("/controls/switches/master-alt");
     chronologicalSinAdd->push_back("/engines/engine/rpm");
 }
-int OpenServerCommand::execute(vector<string> *arr, int index, map<string, Command *> *nameCommandMap)
-{
+
+// execute function : commit the operation of openServer Command
+int OpenServerCommand::execute(vector<string> *arr, int index, map<string, Command *> *nameCommandMap) {
     vector<string> chronologicalSimAdd;
     createChronoSimvector(&chronologicalSimAdd);
     string s = (*arr)[index + 1];
@@ -189,6 +194,7 @@ int OpenServerCommand::execute(vector<string> *arr, int index, map<string, Comma
 
 bool should_stop = false;
 
+// read data from client simuator:
 void OpenServerCommand::readFromClient(int client_socket, vector<string> chronologicalSimAdd) {
     while (!should_stop) {
         char buffer[1024] = {0};
@@ -197,6 +203,7 @@ void OpenServerCommand::readFromClient(int client_socket, vector<string> chronol
         char *ptr = buffer;
         vector<string> vec;
         string word;
+        // read till the end of line :
         while (*ptr != '\n' && *ptr != '\r') {
             while ((*ptr != delim) && (*ptr != '\n') && (*ptr != '\r')) {
                 word += *ptr;
@@ -209,11 +216,7 @@ void OpenServerCommand::readFromClient(int client_socket, vector<string> chronol
             }
         }
         string s, s1;
-        // SinletonMutex *sm = SinletonMutex::getInstance();
-        //sm->LockMutex();
-        //MutexSingleton* ms;
-        // ms->GetInstance()->getMutex();
-        // ( ms->GetInstance()->lockMutex());
+        // orginize the parameters b4 set variables
         for (int i = 0; i < 36; i++) {
             s = chronologicalSimAdd[i];
             s1 = vec[i];
@@ -230,53 +233,28 @@ void OpenServerCommand::readFromClient(int client_socket, vector<string> chronol
                 }
             }
         }
-
-        //  sm->UnlockMutex();
-        // ms->GetInstance()->unlockMutex();
-        //  pthread_mutex_unlock(ms->getMutex());
-        /*for (auto &pair : leftDirection)
-            cout << "key: " << pair.first << " value: " << pair.second << endl; */
     }
 }
-  /*  void writeToClient(int client_socket, queue<string> queueToConnectCommand)
-    {
-        //if message exist in queue, send it to simulator
-        while (!queueToConnectCommand.empty()) {
-            int size = queueToConnectCommand.size();
-            for (int i = 0; i < size; i++) {
-                string message = queueToConnectCommand.front();
-                queueToConnectCommand.pop();
-                ssize_t return_val;
-                return_val = write(client_socket, message.c_str(), message.length());
-                if (return_val == -1) {
-                    cout << "error" << endl;
-                } else {
-                    cout << "it is sent" << endl;
-                }
+// write data to client using the input file . send data to simulator
+void ConnectCommand::writeToClient(int client_socket, queue<string> queueToConnectCommand) {
+    //if message exist in queue, send it to simulator
+    while (!queueToConnectCommand.empty()) {
+        int size = queueToConnectCommand.size();
+        for (int i = 0; i < size; i++) {
+            string message = queueToConnectCommand.front();
+            queueToConnectCommand.pop();
+            ssize_t return_val;
+            return_val = write(client_socket, message.c_str(), message.length());
+            if (return_val == -1) {
+                cout << "error" << endl;
+            } else {
+                cout << "it is sent" << endl;
             }
         }
     }
-*/
-
-    void ConnectCommand :: writeToClient(int client_socket, queue<string> queueToConnectCommand)
-    {
-        //if message exist in queue, send it to simulator
-        while (!queueToConnectCommand.empty()) {
-            int size = queueToConnectCommand.size();
-            for (int i = 0; i < size; i++) {
-                string message = queueToConnectCommand.front();
-                queueToConnectCommand.pop();
-                ssize_t return_val;
-                return_val = write(client_socket, message.c_str(), message.length());
-                if (return_val == -1) {
-                    cout << "error" << endl;
-                } else {
-                    cout << "it is sent" << endl;
-                }
-            }
-        }
-    }
-int  SleepCommand ::execute(vector<string> *arr, int index, map<string, Command *> *nameCommandMap) {
+}
+// execute the sleep command
+int SleepCommand::execute(vector<string> *arr, int index, map<string, Command *> *nameCommandMap) {
     Interpreter *i = new Interpreter();
     string s = (*arr)[index + 1];
     Expression *e = i->interpret(s);
@@ -290,17 +268,20 @@ int  SleepCommand ::execute(vector<string> *arr, int index, map<string, Command 
     this_thread::sleep_for(chrono::milliseconds(timeForSleep));
     return 2;
 }
-int PrintCommand:: execute(vector<string> *arr, int index, map<string, Command *> *nameCommandMap) {
+// print command
+int PrintCommand::execute(vector<string> *arr, int index, map<string, Command *> *nameCommandMap) {
     string s = (*arr)[index + 1];
     double toStringValue;
     int sizeOfInputForPrint = s.size();
     string toPrint;
+    // if the input is string' it prints it,
     if ((s[0] == '"' && (s[sizeOfInputForPrint - 1] == '"'))) {
         if (sizeOfInputForPrint <= 2) {
             cout << "no input to print" << endl;
         }
         toPrint = s.substr(1, sizeOfInputForPrint - 2);
         cout << toPrint << endl;
+        // in case of variable the function prints its value
     } else if ((s[0] != '"' && s[sizeOfInputForPrint - 1] != '"')) {
         //s not found
         if (symbolTable.find(s) == symbolTable.end()) {
@@ -322,7 +303,9 @@ int PrintCommand:: execute(vector<string> *arr, int index, map<string, Command *
     }
     return 2;
 }
-int IfCommand:: execute(vector<string> *arr, int index, map<string, Command *> *nameCommandMap) {
+// if commands: responsible for commands that inside if condition
+// execute the command inside the condition
+int IfCommand::execute(vector<string> *arr, int index, map<string, Command *> *nameCommandMap) {
     int indexToReturn = 0, tempIndex;
     vector<string> conditionPartsVector, vs;
     int helper = index;
@@ -354,9 +337,12 @@ int IfCommand:: execute(vector<string> *arr, int index, map<string, Command *> *
 
     return indexToReturn;
 }
-int WhileCommand :: execute(vector<string> *arr, int index, map<string, Command *> *nameCommandMap) {
+
+//this part responsibles for executing the commands inside while command
+int WhileCommand::execute(vector<string> *arr, int index, map<string, Command *> *nameCommandMap) {
     vector<string> vs;
     int helperIndex = index + 3;
+    // check for start and end of the while
     while ((*arr)[helperIndex] != "}") {
         vs.push_back((*arr)[helperIndex]);
         helperIndex++;
@@ -377,6 +363,7 @@ int WhileCommand :: execute(vector<string> *arr, int index, map<string, Command 
         int indexForExecuteCommand = 0;
         int size = vs.size();
         while (indexForExecuteCommand < size) {
+            // executes while the condition is true:
             string s = vs.at(indexForExecuteCommand);
             if (nameCommandMap->find(s) != nameCommandMap->end()) {
                 Command *c = nameCommandMap->at(s);
@@ -392,19 +379,23 @@ int WhileCommand :: execute(vector<string> *arr, int index, map<string, Command 
     }
     return indexToReturn;
 }
-int ConditionParser:: execute(vector<string> **arr, int index, map<string, Command *> *nameCommandMap) {
+
+int ConditionParser::execute(vector<string> **arr, int index, map<string, Command *> *nameCommandMap) {
     return 0;//    nameCommandsMap
 }
-int SetVar:: execute(vector<string> *arr, int index, map<string, Command *> *nameCommandMap) {
+// set var : insert a new value to an existing variable in maps
+int SetVar::execute(vector<string> *arr, int index, map<string, Command *> *nameCommandMap) {
     string varName = ((*arr)[index]), sim;
     double newVal;
     Expression *e2 = nullptr;
+    // interpret and calculate it:
     e2 = i1.interpret((*arr)[index + 2]);
     newVal = e2->calculate();
     delete e2;
     if (symbolTable.find(varName) != symbolTable.end()) {
         sim = symbolTable.at(varName);
     }
+    // insert to queue and updates the simulator:
     if (rightDirection.find(varName) != rightDirection.end()) {
         rightDirection[varName]->SetValue(newVal);
         string message = "set" + sim + " " + to_string(newVal) + "\r\n";
@@ -413,9 +404,11 @@ int SetVar:: execute(vector<string> *arr, int index, map<string, Command *> *nam
     i1.setVariables(varName + "=" + to_string(newVal));
     return 3;
 }
-int DefineVarCommand:: execute(vector<string> *arr, int index, map<string, Command *> *nameCommandMap) {
+// define a new variable from input text file:
+int DefineVarCommand::execute(vector<string> *arr, int index, map<string, Command *> *nameCommandMap) {
     //interpreter
     string varName = (*arr)[index + 1];
+    // check the arrow dirction :
     if ((*arr)[index + 2] == "->" || (*arr)[index + 2] == "<-") {
         string simAdress = (*arr)[index + 4];
         string simsub = simAdress.substr(1, simAdress.length() - 2);
@@ -431,6 +424,7 @@ int DefineVarCommand:: execute(vector<string> *arr, int index, map<string, Comma
             i1.setVariables(varName + "=" + to_string(0));
         }
         return 5;
+        // if its an equation
     } else if ((*arr)[index + 2] == "=") {
         string sim;
         double newValue;
@@ -442,6 +436,7 @@ int DefineVarCommand:: execute(vector<string> *arr, int index, map<string, Comma
         e5 = i1.interpret(newValueString);
         newValue = e5->calculate();
         delete e5;
+        // update rightDirection map
         if (rightDirection.find(varName) != rightDirection.end()) {
             rightDirection[varName]->SetValue(newValue);
         }
@@ -449,6 +444,7 @@ int DefineVarCommand:: execute(vector<string> *arr, int index, map<string, Comma
         return 4;
     }
 }
+// command that responsibles of writing to simulator
 int ConnectCommand::execute(vector<string> *arr, int index, map<string, Command *> *nameCommandMap) {
     string locS = (*arr)[index + 1];
     string s = (*arr)[index + 2];
@@ -480,6 +476,7 @@ int ConnectCommand::execute(vector<string> *arr, int index, map<string, Command 
     } else {
         std::cout << "Client is now connected to server" << std::endl;
     }
+    // in a separate thread , updates the simulator in real time
     thread thread2(&ConnectCommand::writeToClient, this, client_socket, queueToConnectCommand);
     thread2.detach();
     close(client_socket);

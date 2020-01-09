@@ -11,7 +11,6 @@ using namespace std;
 class VarInfo {
 public:
     VarInfo(string name, string sim, string direction,double val);
-   // VarInfo(string name,double val);
     void SetValue(double val);
     double getValue();
     string getSim();
