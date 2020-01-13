@@ -12,7 +12,7 @@ ex1.cpp		commands.cpp	Expression.cpp		Lexer.cpp	Parser.cpp
 BoolExpression.h	Utils.h		VarInfo.h		main.cpp		fly.txt
 
 NOTE: make sure you have passed valid arguments to FlightGear.
-
+ex3
 How to compile:
 enter these two arguments in the Settings->Additional Settings box:
 
